@@ -20,19 +20,32 @@ def index():
 
 @app.route('/bakeries')
 def bakeries():
-    return ''
+    bakeries = [bakery.to_dict() for bakery in Bakery.query.all()]
+
+    return make_response(bakeries, 200)
 
 @app.route('/bakeries/<int:id>')
 def bakery_by_id(id):
-    return ''
+    bakery = Bakery.query.filter(Bakery.id == id).first()
+    if bakery:
+        body = bakery.to_dict()
+        status = 200
+    else:
+        body = {"message": "Bakery not found"}
+        status = 404
+    return make_response(body, status)
 
 @app.route('/baked_goods/by_price')
 def baked_goods_by_price():
-    return ''
+    by_price = BakedGood.query.order_by(BakedGood.price.desc()).all()
+    goods = [good.to_dict() for good in by_price]
+
+    return make_response(goods, 200)
 
 @app.route('/baked_goods/most_expensive')
 def most_expensive_baked_good():
-    return ''
+    most_expensive = BakedGood.query.order_by(BakedGood.price.desc()).first().to_dict()
+    return make_response(most_expensive, 200)
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
